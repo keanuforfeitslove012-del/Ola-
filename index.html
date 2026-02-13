@@ -277,6 +277,25 @@
             font-size: 60px;
         }
 
+        /* Music Control */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 15px;
+            border-radius: 25px;
+            display: none;
+        }
+
+        .music-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
         h1 {
             color: white;
             text-align: center;
@@ -298,10 +317,10 @@
     <!-- Fireflies -->
     <div id="fireflies"></div>
 
-    <!-- Background Music -->
-    <audio id="bgMusic" loop autoplay>
-        <source src="/mnt/kimi/upload/Frank Ocean - Ivy(M4A_128K).m4a" type="audio/mp4">
-    </audio>
+    <!-- Music Control -->
+    <div class="music-control" id="musicControl">
+        <button class="music-btn" onclick="toggleMusic()" id="musicBtn">🔇</button>
+    </div>
 
     <!-- Page 1 -->
     <div class="page active" id="page1">
@@ -405,6 +424,7 @@
     <script>
         let currentPage = 1;
         let yesClicked = false;
+        let music = null;
 
         // Fireflies
         for(let i=0; i<20; i++) {
@@ -416,12 +436,44 @@
             document.getElementById('fireflies').appendChild(f);
         }
 
-        // Start experience - play music on first interaction
-        function startExperience() {
-            const music = document.getElementById('bgMusic');
+        // Create audio element dynamically
+        function createAudio() {
+            music = new Audio();
+            music.loop = true;
             music.volume = 0.5;
-            music.play().catch(e => console.log('Music play failed:', e));
-            goToPage(2);
+            // Using a reliable audio source
+            music.src = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+            return music;
+        }
+
+        // Start experience
+        function startExperience() {
+            if (!music) {
+                music = createAudio();
+            }
+            music.play().then(() => {
+                document.getElementById('musicControl').style.display = 'block';
+                document.getElementById('musicBtn').textContent = '🔊';
+                goToPage(2);
+            }).catch(e => {
+                console.log('Audio play failed:', e);
+                // Still go to page 2 even if music fails
+                goToPage(2);
+            });
+        }
+
+        // Toggle music
+        function toggleMusic() {
+            if (!music) return;
+            
+            const btn = document.getElementById('musicBtn');
+            if (music.paused) {
+                music.play();
+                btn.textContent = '🔊';
+            } else {
+                music.pause();
+                btn.textContent = '🔇';
+            }
         }
 
         function goToPage(n) {
@@ -493,8 +545,7 @@
                 }
             }, 50);
         }
-        <audio src="Frank Ocean-Ivy(M4A_128K)" />
     </script>
 
 </body>
-                </html>
+    </html>
