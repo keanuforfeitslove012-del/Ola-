@@ -277,28 +277,52 @@
             font-size: 60px;
         }
 
-        /* Music Control */
+        /* Music Overlay */
+        .music-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .music-overlay h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .start-btn {
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            font-size: 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
         .music-control {
             position: fixed;
             top: 20px;
-            left: 20px;
+            right: 20px;
             z-index: 1000;
             background: rgba(255,255,255,0.9);
             padding: 10px 20px;
             border-radius: 25px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .music-btn {
-            background: #e91e63;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
+            display: none;
         }
 
         h1 {
@@ -322,16 +346,20 @@
     <!-- Fireflies -->
     <div id="fireflies"></div>
 
-    <!-- Background Music - Using a working romantic instrumental -->
+    <!-- Music Start Overlay -->
+    <div class="music-overlay" id="musicOverlay">
+        <h2>🎵 Click to Start Experience for Joy 🎵</h2>
+        <button class="start-btn" onclick="startExperience()">Start with Music ❤️</button>
+    </div>
+
+    <!-- Background Music -->
     <audio id="bgMusic" loop>
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-        <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Music Control -->
-    <div class="music-control">
-        <span>🎵</span>
-        <button class="music-btn" onclick="toggleMusic()" id="musicToggle">Play Music</button>
+    <div class="music-control" id="musicControl">
+        <button onclick="toggleMusic()" id="musicBtn">🔊</button>
     </div>
 
     <!-- Page 1 -->
@@ -436,7 +464,7 @@
     <script>
         let currentPage = 1;
         let yesClicked = false;
-        let musicPlaying = false;
+        let musicPlaying = true;
 
         // Fireflies
         for(let i=0; i<20; i++) {
@@ -448,42 +476,31 @@
             document.getElementById('fireflies').appendChild(f);
         }
 
-        // Music control
-        function toggleMusic() {
+        // Start experience with music
+        function startExperience() {
             const music = document.getElementById('bgMusic');
-            const btn = document.getElementById('musicToggle');
-            
-            if (music.paused) {
-                music.volume = 0.5;
-                music.play().then(() => {
-                    musicPlaying = true;
-                    btn.textContent = 'Pause Music';
-                    btn.style.background = '#00b894';
-                }).catch(e => {
-                    console.log('Autoplay blocked:', e);
-                    alert('Please tap the smile first, then click Play Music!');
-                });
-            } else {
-                music.pause();
-                musicPlaying = false;
-                btn.textContent = 'Play Music';
-                btn.style.background = '#e91e63';
-            }
+            music.volume = 0.4;
+            music.play().then(() => {
+                document.getElementById('musicOverlay').style.display = 'none';
+                document.getElementById('musicControl').style.display = 'block';
+            }).catch(e => {
+                alert('Please click again to start music');
+            });
         }
 
-        // Try to autoplay on first user interaction
-        document.addEventListener('click', function initAudio() {
+        // Toggle music
+        function toggleMusic() {
             const music = document.getElementById('bgMusic');
-            if (!musicPlaying && music.paused) {
-                music.volume = 0.4;
-                music.play().then(() => {
-                    musicPlaying = true;
-                    document.getElementById('musicToggle').textContent = 'Pause Music';
-                    document.getElementById('musicToggle').style.background = '#00b894';
-                }).catch(e => console.log('Autoplay blocked'));
+            const btn = document.getElementById('musicBtn');
+            
+            if (music.paused) {
+                music.play();
+                btn.textContent = '🔊';
+            } else {
+                music.pause();
+                btn.textContent = '🔇';
             }
-            document.removeEventListener('click', initAudio);
-        }, { once: true });
+        }
 
         function goToPage(n) {
             document.getElementById('page'+currentPage).classList.remove('active');
@@ -551,4 +568,9 @@
                     i++;
                 } else {
                     clearInterval(type);
-            
+                }
+            }, 50);
+        }
+    </script>
+
+</b
