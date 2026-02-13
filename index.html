@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For Joy ❤️</title>
+    <audio src="Frank Ocean-Ivy(M4A_128K)" />
     <style>
         * {
             margin: 0;
@@ -277,16 +278,6 @@
             font-size: 60px;
         }
 
-        /* Music Note */
-        .music-note {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            font-size: 30px;
-            animation: bounce 2s infinite;
-            z-index: 1000;
-        }
-
         h1 {
             color: white;
             text-align: center;
@@ -308,12 +299,14 @@
     <!-- Fireflies -->
     <div id="fireflies"></div>
 
-    <!-- Music Note Reminder -->
-    <div class="music-note">🎵</div>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop autoplay>
+        <source src="/mnt/kimi/upload/Frank Ocean - Ivy(M4A_128K).m4a" type="audio/mp4">
+    </audio>
 
     <!-- Page 1 -->
     <div class="page active" id="page1">
-        <div class="smile-container" onclick="goToPage(2)">
+        <div class="smile-container" onclick="startExperience()">
             <div class="big-smile">😁</div>
             <p class="tap-text">Tap the smile to begin, Joy!</p>
         </div>
@@ -424,6 +417,14 @@
             document.getElementById('fireflies').appendChild(f);
         }
 
+        // Start experience - play music on first interaction
+        function startExperience() {
+            const music = document.getElementById('bgMusic');
+            music.volume = 0.5;
+            music.play().catch(e => console.log('Music play failed:', e));
+            goToPage(2);
+        }
+
         function goToPage(n) {
             document.getElementById('page'+currentPage).classList.remove('active');
             currentPage = n;
@@ -496,4 +497,4 @@
     </script>
 
 </body>
-    </html>
+                </html>
